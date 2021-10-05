@@ -1,0 +1,13 @@
+[package]
+name = "mcc_patch"
+version = "0.1.0"
+edition = "2018"
+description = "MCLauncher APK patcher"
+repository = "https://github.com/tuxuser/monsieurcc-patch"
+license = "MIT"
+homepage = "https://github.com/tuxuser/monsieurcc-patch"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+structopt = "0.3.23"
