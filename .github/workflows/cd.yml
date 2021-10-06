@@ -73,6 +73,8 @@ jobs:
       - name: Packaging final binary
         shell: bash
         run: |
+          cp README.md target/${{ matrix.job.target }}/release/
+          cp patches.yml target/${{ matrix.job.target }}/release/
           cd target/${{ matrix.job.target }}/release
           ####### reduce binary size by removing debug symbols #######
           BINARY_NAME=${{ matrix.project }}${{ matrix.job.binary-postfix }}
@@ -84,7 +86,7 @@ jobs:
           "$GCC_PREFIX"strip $BINARY_NAME
           ########## create tar.gz ##########
           RELEASE_NAME=${{ matrix.project }}-${GITHUB_REF/refs\/tags\//}-${{ matrix.job.os-name }}-${{ matrix.job.architecture }}
-          tar czvf $RELEASE_NAME.tar.gz $BINARY_NAME
+          tar czvf $RELEASE_NAME.tar.gz $BINARY_NAME README.md patches.yml
           ########## create sha256 ##########
           if [[ ${{ runner.os }} == 'Windows' ]]; then
             certutil -hashfile $RELEASE_NAME.tar.gz sha256 | grep -E [A-Fa-f0-9]{64} > $RELEASE_NAME.sha256

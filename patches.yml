@@ -1,0 +1,58 @@
+---
+- name: Change APK package name
+  info: Renaming the package allows installing the mod APK next to the original 
+  filepaths: 
+    - "smali/de/silpion/mc2/BuildConfig.smali"
+    - "smali/helper/ResourceHelper.smali"
+    - "AndroidManifest.xml"
+  match_type: literal
+  match_pattern: "de.silpion.mc2"
+  replace: "de.mcc_hack.mc2_mod"
+
+- name: Remove sharedUserId
+  info: sharedUserId needs removal to allow signing mc2 mod with independent key
+  filepaths:
+   - "AndroidManifest.xml"
+  match_type: literal
+  match_pattern: "android:sharedUserId=\"android.uid.system\""
+  replace: ""
+
+- name: Change displayname
+  info: Changing displayname makes it easier to distinguish between original and mod app 
+  filepaths:
+   - "res/values*/strings.xml"
+  match_type: literal
+  match_pattern: "<string name=\"app_name\">MC2</string>"
+  replace: "<string name=\"app_name\">MC2 MOD</string>"
+
+- name: Disable SSL (Part 1)
+  info: Rewrites all occurences of `https://mc20.monsieur-cuisine.com` to `http://mc20.monsieur-cuisine.com`
+  filepaths:
+   - "smali/mcapi/*.smali"
+  match_type: literal
+  match_pattern: "https://mc20.monsieur-cuisine.com"
+  replace: "http://mc20.monsieur-cuisine.com"
+
+- name: Disable SSL (Part 2)
+  info: Rewrites all occurences of `javax.net.ssl.HttpsURLConnection` to `java.net.HttpURLConnection`
+  filepaths:
+   - "smali/*.smali"
+  match_type: literal
+  match_pattern: "Ljavax/net/ssl/HttpsURLConnection"
+  replace: "Ljava/net/HttpURLConnection"
+
+- name: Disable SSL (Part 3)
+  info: Removes call to `.setSSLSocketFactory` on `java.net.HttpURLConnection` (there is no such method for non-SSL URL connection ;))
+  filepaths:
+   - "smali/*.smali"
+  match_type: regex
+  match_pattern: '\.line\s([0-9]+\n)\s+sget-object\sp2,\s.+Ljavax/net/ssl/SSLContext;\n\s+invoke-virtual[\S\s]+setSSLSocketFactory\(Ljavax/net/ssl/SSLSocketFactory;\)V'
+  replace: '.line $1    nop'
+
+- name: Patch in custom domain or host ip
+  info: Affected files, smali/mcapi/McApi.smali, smali/mcapi/McUsageApi.smali, additionally, on version >= 1.1.22-248 also smali/mcapi/APIServiceFactory.smali
+  filepaths:
+   - "smali/mcapi/*.smali"
+  match_type: literal
+  match_pattern: "mc20.monsieur-cuisine.com"
+  replace: "mcc.example.com"
