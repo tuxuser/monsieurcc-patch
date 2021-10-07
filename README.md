@@ -18,109 +18,68 @@ Tested / works so far for:
 263e252dc9e139cb0a93f84547ca1971b3c4566136d0205dcbcea3c7ef24e201  MCLauncher-release-1.1.22-248.apk
 ```
 
-Dependency versions:
+## Download
 
-* apktool 2.6.0
-* apksigner 0.9
-
-## Dependencies
-
-Following tools need to be found in your `$PATH`:
-
-* apktool (https://ibotpeaches.github.io/Apktool/)
-* apksigner
-* zipalign
-* keytool
-
-apksigner, zipalign, keytool are part of the Android SDK
+* Fetch latest release from [Github Releases](https://github.com/tuxuser/monsieurcc-patch/releases/latest).
+* Obtain original `MCLauncher.apk` for your **Monsieur Cuisine Connect**.
 
 ## Usage
 
+### Manual
+
+Following tools need to be found in your `$PATH`:
+
+* apktool (>= 2.6.0) (https://ibotpeaches.github.io/Apktool/install/)
+* apksigner
+* zipalign
+* keytool (optional, only needed if you want to create own signing key)
+
+`apksigner` and `zipalign` are part of the Android SDK, for recent Ubuntu/Debian distros they're
+contained in package `google-android-build-tools-installer`.
+
+Steps:
+* Extract or build `mcc_patch`
+* Copy `MCLauncher APK` next to `mcc_patch binary`
+* Run `./mcc_patch -o patched_MCLauncher.apk <original.apk>`
+
+## Docker
+
+Copy `MCLauncher APK` in some directory to share it inside the Docker container.
+
 ```
-mcc_patch 0.1.1
-
-USAGE:
-    mcc_patch [FLAGS] [OPTIONS] <apk-file>
-
-FLAGS:
-        --debug      
-    -h, --help       Prints help information
-    -V, --version    Prints version information
-
-OPTIONS:
-    -o, --output-file <output-file>              Output filepath
-    -p, --patch-file <patch-file>                Path to YAML patchfile [default: patches.yml]
-    -s, --signing-keystore <signing-keystore>    Signing keystore [default: keystore.jks]
-
-ARGS:
-    <apk-file>    Path to APK to patch
+docker run -v <local directory with apk>:/apk -it tuxuser/mcc_patch:latest ./mcc_patch -o /apk/patched.apk /apk/<original MCLauncher APK>
 ```
 
-### Example run
 
+## Development
+
+Requirements:
+* Rust toolchain
+* cargo
+
+[rustup](https://rustup.rs) is the preferred way to manage the Rust development environment.
+
+Build
+
+```sh
+# To build binary into target/<build mode>/
+cargo build
+# Or directly build & run
+cargo run -- <program arguments>
 ```
-$ ./mcc_patch -o patched_MCLauncher.apk ../android_packages/MCLauncher-release-1.1.22-248.apk
-[+] Unpacking APK "MCLauncher-release-1.1.22-248.apk" ...
-[*] APKTool reports
-I: Using Apktool 2.6.0 on MCLauncher-release-1.1.22-248.apk
-I: Loading resource table...
-I: Decoding AndroidManifest.xml with resources...
-I: Loading resource table from file: /home/user/.local/share/apktool/framework/1.apk
-I: Regular manifest package...
-I: Decoding file-resources...
-I: Decoding values */* XMLs...
-I: Baksmaling classes.dex...
-I: Copying assets and libs...
-I: Copying unknown files...
-I: Copying original files...
 
+Run test
+```
+cargo test
+```
 
-[+] Applying patches from "patches.yml"
--> Patch: Change APK package name
-* Match on file "MCLauncher-release-1.1.22-248.apk.out/smali/de/silpion/mc2/BuildConfig.smali"
-* Match on file "MCLauncher-release-1.1.22-248.apk.out/smali/helper/ResourceHelper.smali"
-* Match on file "MCLauncher-release-1.1.22-248.apk.out/AndroidManifest.xml"
--> Patch: Remove sharedUserId
-* Match on file "MCLauncher-release-1.1.22-248.apk.out/AndroidManifest.xml"
--> Patch: Change displayname
-* Match on file "MCLauncher-release-1.1.22-248.apk.out/res/values/strings.xml"
-* Match on file "MCLauncher-release-1.1.22-248.apk.out/res/values-en/strings.xml"
-* Match on file "MCLauncher-release-1.1.22-248.apk.out/res/values-es/strings.xml"
-* Match on file "MCLauncher-release-1.1.22-248.apk.out/res/values-fr/strings.xml"
-* Match on file "MCLauncher-release-1.1.22-248.apk.out/res/values-it/strings.xml"
-* Match on file "MCLauncher-release-1.1.22-248.apk.out/res/values-nl/strings.xml"
-* Match on file "MCLauncher-release-1.1.22-248.apk.out/res/values-pl/strings.xml"
-* Match on file "MCLauncher-release-1.1.22-248.apk.out/res/values-pt/strings.xml"
--> Patch: Disable SSL (Part 1)
-* Match on file "MCLauncher-release-1.1.22-248.apk.out/smali/mcapi/APIServiceFactory.smali"
-* Match on file "MCLauncher-release-1.1.22-248.apk.out/smali/mcapi/McApi.smali"
-* Match on file "MCLauncher-release-1.1.22-248.apk.out/smali/mcapi/McUsageApi.smali"
--> Patch: Disable SSL (Part 2)
-* Match on file "MCLauncher-release-1.1.22-248.apk.out/smali/nm$b.smali"
-* Match on file "MCLauncher-release-1.1.22-248.apk.out/smali/nm$c.smali"
-* Match on file "MCLauncher-release-1.1.22-248.apk.out/smali/nm$d.smali"
-* Match on file "MCLauncher-release-1.1.22-248.apk.out/smali/nm$e.smali"
-* Match on file "MCLauncher-release-1.1.22-248.apk.out/smali/nm$f.smali"
--> Patch: Disable SSL (Part 3)
-* Match on file "MCLauncher-release-1.1.22-248.apk.out/smali/nm$d.smali"
--> Patch: Patch in custom domain or host ip
-* Match on file "MCLauncher-release-1.1.22-248.apk.out/smali/mcapi/APIServiceFactory.smali"
-* Match on file "MCLauncher-release-1.1.22-248.apk.out/smali/mcapi/McApi.smali"
-* Match on file "MCLauncher-release-1.1.22-248.apk.out/smali/mcapi/McUsageApi.smali"
-[+] Building APK into "patched_MCLauncher.apk" ...
-[*] APKTool reports
-I: Using Apktool 2.6.0
-I: Checking whether sources has changed...
-I: Smaling smali folder into classes.dex...
-I: Checking whether resources has changed...
-I: Building resources...
-I: Copying libs... (/lib)
-I: Building apk file...
-I: Copying unknown files/dir...
-I: Built apk...
-W: /MCLauncher-release-1.1.22-248.apk.out/AndroidManifest.xml:34: Tag <action> attribute name has invalid character ':'.
-W: /MCLauncher-release-1.1.22-248.apk.out/AndroidManifest.xml:35: Tag <action> attribute name has invalid character ':'.
+Run formatters & linters
+```sh
+# First, install
+cargo install clippy
+cargo install fmt
 
-
-[+] Signing APK
+# Run
+cargo fmt --all
+cargo clippy --all
 ```
