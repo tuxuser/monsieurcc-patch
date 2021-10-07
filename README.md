@@ -2,15 +2,15 @@
 
 Patches MCLauncher APK (de.silpion.mc2)
 
-* Disable SSL (Use http instead of https)
+* Disable SSL (Use **http** instead of **https**)
 * Change package name so official apk and mod can co-exist
-* Remove `android:sharedUserId="android.uid.system"` from Manifest
-* ...
+* Change target domain name from **mc20.monsieur-cuisine.com** to **mcc.example.com** (can be adjusted in `patches.yml`)
 
-Resulting APK will be signed with the **Android Platform Key**.
+Resulting APK will be signed with the publically available **Android Platform Key**.
 
-DN: EMAILADDRESS=android@android.com, CN=Android, OU=Android, O=Android, L=Mountain View, ST=California, C=US
-SHA-256 digest: c8a2e9bccf597c2fb6dc66bee293fc13f2fc47ec77bc6b2b0d52c11f51192ab8
+>DN: EMAILADDRESS=android@android.com, CN=Android, OU=Android, O=Android, L=Mountain View, ST=California, C=US
+>
+>SHA-256 digest: c8a2e9bccf597c2fb6dc66bee293fc13f2fc47ec77bc6b2b0d52c11f51192ab8
 
 
 Tested / works so far on following APKs:

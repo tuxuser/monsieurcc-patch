@@ -9,14 +9,6 @@
   match_pattern: "de.silpion.mc2"
   replace: "de.mcc_hack.mc2_mod"
 
-- name: Remove sharedUserId
-  info: sharedUserId needs removal to allow signing mc2 mod with independent key
-  filepaths:
-   - "AndroidManifest.xml"
-  match_type: literal
-  match_pattern: "android:sharedUserId=\"android.uid.system\""
-  replace: ""
-
 - name: Change displayname
   info: Changing displayname makes it easier to distinguish between original and mod app 
   filepaths:
