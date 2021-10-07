@@ -1,13 +1,19 @@
 # MCC patcher
 
-Patches MCLauncher APK
+Patches MCLauncher APK (de.silpion.mc2)
 
 * Disable SSL (Use http instead of https)
 * Change package name so official apk and mod can co-exist
 * Remove `android:sharedUserId="android.uid.system"` from Manifest
 * ...
 
-Tested / works so far for:
+Resulting APK will be signed with the **Android Platform Key**.
+
+DN: EMAILADDRESS=android@android.com, CN=Android, OU=Android, O=Android, L=Mountain View, ST=California, C=US
+SHA-256 digest: c8a2e9bccf597c2fb6dc66bee293fc13f2fc47ec77bc6b2b0d52c11f51192ab8
+
+
+Tested / works so far on following APKs:
 
 ```
 # SHA256
@@ -32,7 +38,6 @@ Following tools need to be found in your `$PATH`:
 * apktool (>= 2.6.0) (https://ibotpeaches.github.io/Apktool/install/)
 * apksigner
 * zipalign
-* keytool (optional, only needed if you want to create own signing key)
 
 `apksigner` and `zipalign` are part of the Android SDK, for recent Ubuntu/Debian distros they're
 contained in package `google-android-build-tools-installer`.

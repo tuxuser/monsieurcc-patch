@@ -32,6 +32,8 @@ fn main() -> Result<(), Box<dyn Error>> {
         return Err("Input APK file does not exist".into());
     } else if !args.patch_file.exists() {
         return Err("Patches YAML file does not exist".into());
+    } else if !args.signing_keystore.exists() {
+        return Err("Keystore file does not exist".into());
     }
 
     let input_filename = args
@@ -123,39 +125,6 @@ fn main() -> Result<(), Box<dyn Error>> {
     // Move aligned apk to output filepath
     std::fs::rename("aligned.apk", &output_file)?;
 
-    // Optionally, generate fresh siging key
-    if !args.signing_keystore.exists() {
-        println!("[!] Generating fresh signing keystore");
-        let output = Command::new("keytool")
-            .arg("-genkey")
-            .arg("-noprompt")
-            .arg("-v")
-            .arg("-keystore")
-            .arg(&args.signing_keystore)
-            .arg("-keyalg")
-            .arg("RSA")
-            .arg("-keysize")
-            .arg("2048")
-            .arg("-validity")
-            .arg("10000")
-            .arg("-storepass")
-            .arg("MCC1234567890")
-            .arg("-keypass")
-            .arg("MCC0987654321")
-            .arg("-alias")
-            .arg("MCCHack")
-            .arg("-dname")
-            .arg("CN=mcc_hack, OU=Main, O=MCC_HACK, L=Munich, S=Bavaria, C=DE")
-            .output()
-            .context("Failed to execute keytool")?;
-
-        println!(
-            "[*] keytool reports\n{}{}\n",
-            String::from_utf8(output.stdout).expect("Found invalid UTF-8 in stdout..."),
-            String::from_utf8(output.stderr).expect("Found invalid UTF-8 in stderr..."),
-        );
-    }
-
     // Sign APK
     println!("[+] Signing APK");
     let output = Command::new("apksigner")
@@ -163,8 +132,6 @@ fn main() -> Result<(), Box<dyn Error>> {
         .arg("--ks")
         .arg(&args.signing_keystore)
         .arg("--ks-pass")
-        .arg("pass:MCC1234567890")
-        .arg("--key-pass")
         .arg("pass:MCC0987654321")
         .arg(&output_file)
         .output()
