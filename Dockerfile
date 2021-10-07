@@ -23,7 +23,7 @@ RUN ls -l ./target/release/mcc_patch
 FROM debian:bullseye
 ARG DEBIAN_FRONTEND=noninteractive
 RUN apt update && \
-  apt install -y google-android-build-tools-installer
+  apt install -y zipalign apksigner
 
 # Copy recent apktool from build stage
 COPY --from=builder /work/apktool /usr/local/bin/
